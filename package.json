@@ -1,0 +1,12 @@
+{
+  "name": "axcessor2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.1.5"
+  },
+  "dependencies": {
+    "typebolt": "^0.6.0"
+  }
+}
