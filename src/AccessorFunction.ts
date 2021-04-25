@@ -8,7 +8,7 @@
      ## ## ## :##
       ## ## ##*/
 
-import { And, Not } from 'typebolt';
+import { And, Not, UnionToIntersection } from 'typebolt';
 import { AccessorChain } from './AccessorChain';
 
 export type IsNullable<T> = undefined extends T
@@ -48,17 +48,19 @@ export type Wrapped<
   [ROOT]: Root;
   [SAFE]: SafeAccess;
   [ACCESSOR]: CurrentAccessorChain;
-} & (T extends {}
-  ? {
-      [K in keyof T]-?: Wrapped<
-        T[K],
-        Root,
-        And<SafeAccess, Not<ParentNullable>>,
-        IsNullable<T[K]>,
-        [...CurrentAccessorChain, K]
-      >;
-    }
-  : T);
+} & UnionToIntersection<
+  T extends {}
+    ? {
+        [K in keyof T]-?: Wrapped<
+          T[K],
+          Root,
+          And<SafeAccess, Not<ParentNullable>>,
+          IsNullable<T[K]>,
+          [...CurrentAccessorChain, K]
+        >;
+      }
+    : T
+>;
 
 export type AccessorFunction<
   Root,

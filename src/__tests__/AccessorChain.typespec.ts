@@ -10,9 +10,10 @@
 
 import { Assert, IsExactType, IsType } from 'typebolt';
 import { AccessorChain } from '../AccessorChain';
+import { Wrapped } from '../AccessorFunction';
 
 //
-// TEST GET TARGET 
+// TEST GET TARGET
 //
 {
   {
@@ -22,6 +23,30 @@ import { AccessorChain } from '../AccessorChain';
     type T0 = AccessorChain.GetTarget<Root, ['a', 'b', 'c1']>;
     type T1 = AccessorChain.GetTarget<Root, ['a', 'b', 'c2']>;
     type T2 = AccessorChain.GetTarget<Root, ['a', 'b', 'c2', 'd']>;
+  }
+}
+
+{
+  // Wrapped exposes all possible properties of union type
+  {
+    type Root = { a: 42 } | { b: 1337 };
+
+    type Keys = keyof Wrapped<Root>;
+
+    Assert<IsType<Keys, 'a' | 'b'>>();
+  }
+
+  {
+    type Root = { a: 42 } | { a: 1337; b: 1337 };
+
+    type Keys = keyof Wrapped<Root>;
+
+    Assert<IsType<Keys, 'a' | 'b'>>();
+    Assert<IsExactType<Root['a'], 42 | 1337>>();
+    Assert<IsType<1337, Wrapped<Root>['b']>>();
+
+    // TODO: Should check that access to B in unsafe
+    // TODO: Should check that access to A is safe
   }
 }
 
